@@ -10,7 +10,6 @@ import 'package:intent/action.dart' as android_action;
 import 'package:permission_handler/permission_handler.dart';
 
 class DialPad extends StatefulWidget {
-  final ValueSetter<String> makeCall;
   final Color buttonColor;
   final Color buttonTextColor;
   final Color dialButtonColor;
@@ -21,8 +20,7 @@ class DialPad extends StatefulWidget {
   final Color numberColor;
 
   DialPad(
-      {this.makeCall,
-      this.outputMask,
+      {this.outputMask,
       this.buttonColor,
       this.buttonTextColor,
       this.dialButtonColor,
@@ -157,7 +155,6 @@ class _DialPadState extends State<DialPad> {
                           ..startActivity().catchError((e) => print(e));
                         // Either the permission was already granted before or the user just granted it.
                       }
-                      widget.makeCall(_value);
                     },
                   ),
                 ),
