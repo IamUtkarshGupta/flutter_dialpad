@@ -10,6 +10,7 @@ import 'package:intent/action.dart' as android_action;
 import 'package:permission_handler/permission_handler.dart';
 
 class DialPad extends StatefulWidget {
+  final ValueSetter<String> makeCall;
   final Color buttonColor;
   final Color buttonTextColor;
   final Color dialButtonColor;
@@ -20,7 +21,8 @@ class DialPad extends StatefulWidget {
   final Color numberColor;
 
   DialPad(
-      {this.outputMask,
+      {this.makeCall,
+      this.outputMask,
       this.buttonColor,
       this.buttonTextColor,
       this.dialButtonColor,
@@ -55,7 +57,7 @@ class _DialPadState extends State<DialPad> {
   @override
   void initState() {
     textEditingController = MaskedTextController(
-        mask: widget.outputMask != null ? widget.outputMask : '0000000000');
+        mask: widget.outputMask != null ? widget.outputMask : '(000) 000-0000');
     super.initState();
   }
 
@@ -136,7 +138,7 @@ class _DialPadState extends State<DialPad> {
                   child: DialButton(
                     icon: Icons.phone,
                     color: Colors.green,
-                    onTap: () async {
+                    onTap: (phoneNumber) async {
                       if (await Permission.phone.isPermanentlyDenied) {
                         // The user opted to never again see the permission request dialog for this
                         // app. The only way to change the permission's status now is to let the
@@ -155,6 +157,7 @@ class _DialPadState extends State<DialPad> {
                           ..startActivity().catchError((e) => print(e));
                         // Either the permission was already granted before or the user just granted it.
                       }
+                      //widget.makeCall(_value);
                     },
                   ),
                 ),
@@ -202,7 +205,7 @@ class DialButton extends StatefulWidget {
   final Color textColor;
   final IconData icon;
   final Color iconColor;
-  final Function onTap;
+  final ValueSetter<String> onTap;
   final bool shouldAnimate;
   DialButton(
       {this.key,
