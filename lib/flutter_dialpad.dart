@@ -14,6 +14,7 @@ class DialPad extends StatefulWidget {
   final Color backspaceButtonIconColor;
   final String outputMask;
   final bool enableDtmf;
+  final Color numberColor;
 
   DialPad(
       {this.makeCall,
@@ -23,7 +24,8 @@ class DialPad extends StatefulWidget {
       this.dialButtonColor,
       this.dialButtonIconColor,
       this.backspaceButtonIconColor,
-      this.enableDtmf});
+      this.enableDtmf,
+      this.numberColor});
 
   @override
   _DialPadState createState() => _DialPadState();
@@ -109,7 +111,7 @@ class _DialPadState extends State<DialPad> {
             padding: EdgeInsets.all(20),
             child: TextFormField(
               readOnly: true,
-              style: TextStyle(color: Colors.white, fontSize: sizeFactor / 2),
+              style: TextStyle(color: widget.numberColor??Colors.black, fontSize: sizeFactor / 2),
               textAlign: TextAlign.center,
               decoration: InputDecoration(border: InputBorder.none),
               controller: textEditingController,
