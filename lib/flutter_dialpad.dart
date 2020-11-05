@@ -136,7 +136,7 @@ class _DialPadState extends State<DialPad> {
                   child: DialButton(
                     icon: Icons.phone,
                     color: Colors.green,
-                    onTap: (phoneNumber) async {
+                    onTap: () async {
                       if (await Permission.phone.isPermanentlyDenied) {
                         // The user opted to never again see the permission request dialog for this
                         // app. The only way to change the permission's status now is to let the
@@ -151,7 +151,7 @@ class _DialPadState extends State<DialPad> {
                       } else if (await Permission.phone.request().isGranted) {
                         android_intent.Intent()
                           ..setAction(android_action.Action.ACTION_CALL)
-                          ..setData(Uri(scheme: "tel", path: phoneNumber))
+                          ..setData(Uri(scheme: "tel", path: _value))
                           ..startActivity().catchError((e) => print(e));
                         // Either the permission was already granted before or the user just granted it.
                       }
@@ -202,7 +202,7 @@ class DialButton extends StatefulWidget {
   final Color textColor;
   final IconData icon;
   final Color iconColor;
-  final ValueSetter<String> onTap;
+  final Function onTap;
   final bool shouldAnimate;
   DialButton(
       {this.key,
