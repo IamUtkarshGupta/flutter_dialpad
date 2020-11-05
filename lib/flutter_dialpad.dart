@@ -157,7 +157,7 @@ class _DialPadState extends State<DialPad> {
                           ..startActivity().catchError((e) => print(e));
                         // Either the permission was already granted before or the user just granted it.
                       }
-                      //widget.makeCall(_value);
+                      widget.makeCall(_value);
                     },
                   ),
                 ),
