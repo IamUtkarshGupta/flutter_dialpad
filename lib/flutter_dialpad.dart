@@ -2,8 +2,12 @@ library flutter_dialpad;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialpad/permission_dialog.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_dtmf/flutter_dtmf.dart';
+import 'package:intent/intent.dart' as android_intent;
+import 'package:intent/action.dart' as android_action;
+import 'package:permission_handler/permission_handler.dart';
 
 class DialPad extends StatefulWidget {
   final ValueSetter<String> makeCall;
@@ -111,7 +115,9 @@ class _DialPadState extends State<DialPad> {
             padding: EdgeInsets.all(20),
             child: TextFormField(
               readOnly: true,
-              style: TextStyle(color: widget.numberColor??Colors.black, fontSize: sizeFactor / 2),
+              style: TextStyle(
+                  color: widget.numberColor ?? Colors.black,
+                  fontSize: sizeFactor / 2),
               textAlign: TextAlign.center,
               decoration: InputDecoration(border: InputBorder.none),
               controller: textEditingController,
@@ -132,8 +138,26 @@ class _DialPadState extends State<DialPad> {
                   child: DialButton(
                     icon: Icons.phone,
                     color: Colors.green,
-                    onTap: (value) {
-                      widget.makeCall(_value);
+                    onTap: (phoneNumber) async {
+                      if (await Permission.phone.isPermanentlyDenied) {
+                        // The user opted to never again see the permission request dialog for this
+                        // app. The only way to change the permission's status now is to let the
+                        // user manually enable it in the system settings.
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PermissionDenied(
+                                title: "Call",
+                              );
+                            });
+                      } else if (await Permission.phone.request().isGranted) {
+                        android_intent.Intent()
+                          ..setAction(android_action.Action.ACTION_CALL)
+                          ..setData(Uri(scheme: "tel", path: phoneNumber))
+                          ..startActivity().catchError((e) => print(e));
+                        // Either the permission was already granted before or the user just granted it.
+                      }
+                      //widget.makeCall(_value);
                     },
                   ),
                 ),
@@ -287,7 +311,10 @@ class _DialButtonState extends State<DialButton>
                                               : Colors.white),
                                     ))
                             : Icon(widget.icon,
-                                size: sizeFactor / 2, color: widget.iconColor != null ? widget.iconColor : Colors.white)),
+                                size: sizeFactor / 2,
+                                color: widget.iconColor != null
+                                    ? widget.iconColor
+                                    : Colors.white)),
                   ))),
     );
   }

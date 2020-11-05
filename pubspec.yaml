@@ -12,6 +12,8 @@ dependencies:
 
   flutter_dtmf: ^0.0.3
   flutter_masked_text: ^0.8.0
+  intent:
+  permission_handler: ^5.0.1+1
   #auto_size_text: ^2.0.2+1
 
 dev_dependencies:
